@@ -3,7 +3,7 @@ title: Cloud FunctionsをGitHub PackagesのContainer Registoryで配布してみ
 emoji: "📝"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["cloudfunctions", "github", "githubactions", "githubpackages"]
-published: false
+published: true
 ---
 
 長いタイトルの通り、色々と試してみたかった実験的な記録です。
@@ -24,6 +24,8 @@ published: false
 
 さらに関数をローカルで実行可能なコンテナにビルドする[pack](https://cloud.google.com/functions/docs/building/pack?hl=ja)というツールまで提供されています。これを使うことで、関数を Function Frameworks でラップしたコンテナを自動的に作ってくれます。なんて便利なんでしょう。
 
+ちなみにこれも調べているうちに知ったんですが、 Cloud Functions の関数のコンテナは GCP の Container Registory に配置されており、ユーザからもアクセス可能になっています。これをローカルに pull して実行することもできました。
+
 ### 1. 関数を作成
 
 今回作成するのは HTTP でトリガーされる関数です。関数の実装は公式ドキュメントにある[サンプル](https://cloud.google.com/functions/docs/writing/http?hl=ja#sample_usage)を利用します。
@@ -37,7 +39,7 @@ npm install escape-html --save
 
 サンプル実装を配置します。
 
-```node:index.js
+```javascript:index.js
 const escapeHtml = require('escape-html');
 
 /**
@@ -225,5 +227,9 @@ docker run --rm -p 8080:8080 docker.pkg.github.com/bisque33/github-container-int
 $ curl http://localhost:8080
 Hello World!
 ```
+
+## おわりに
+
+作成したサンプルのリポジトリは[こちら](https://github.com/bisque33/github-container-integration)に公開しています。
 
 GitHub Actions と Github Packages の Container Registory を連携することで簡単にイメージをレジストリに登録でき、プライベートなイメージの共有がやりやすくなったのではないでしょうか！
