@@ -1,0 +1,8 @@
+{
+  "name": "zenn-connect",
+  "version": "1.0.0",
+  "description": "",
+  "devDependencies": {
+    "zenn-cli": "^0.1.110"
+  }
+}
