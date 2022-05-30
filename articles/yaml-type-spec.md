@@ -1,9 +1,9 @@
 ---
-title: "js-yamlでYAMLファイルのtimestampを文字列として読み取る方法"
+title: "YAMLの型仕様およびjs-yamlにおけるtimestampの解析仕様について"
 emoji: "🐥"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: [javascript, yaml]
-published: false
+published: true
 ---
 
 ## まえがき
@@ -18,13 +18,13 @@ JavaScriptのYAMLパーサーライブラリである[js-yaml](https://github.co
 
 > YAML is both a text format and a method for presenting any native data structure in this format.
 
-[https://yaml.org/spec/1.2.2/#processes-and-models](https://yaml.org/spec/1.2.2/#processes-and-models)
+引用: [https://yaml.org/spec/1.2.2/#processes-and-models](https://yaml.org/spec/1.2.2/#processes-and-models)
 
 YAMLパーサーは、YAMLの型仕様に則り、値をネイティブ型へと変換するのが本来の望ましい働きであるわけですね。
 
 ### 型の区別
 
-JavaScript製のYAMLパーサーライブラリである[js-yaml](https://github.com/nodeca/js-yaml)が、値を[timestamp](https://yaml.org/type/timestamp.html)として判定する条件を見ていきます。（実装はパーサーにより異なる可能性があります。）
+JavaScript製のYAMLパーサーライブラリである[js-yaml](https://github.com/nodeca/js-yaml)が、値を[timestamp](https://yaml.org/type/timestamp.html)あるいは文字列として判定する条件を見ていきます。（実装はパーサーにより異なる可能性があります。）
 
 #### 1. Tagに `!!timestamp` が指定されている
 
@@ -75,7 +75,7 @@ date: 2022/05/28
 
 #### 3. 文字列として記述されている
 
-文字列として**明示的に示されて**いる場合は、文字列として解析されます。
+文字列として**明示的に示されている**場合は、文字列として解析されます。
 
 クォートで囲っている場合:
 
@@ -116,4 +116,4 @@ js-yamlは[読み込みオプション](https://github.com/nodeca/js-yaml#load-s
 
 ## おわり
 
-雰囲気で使ってきたYAMLの奥深さに少しだけふれることができました。
+雰囲気で使ってきたYAMLの奥深さを少しだけ覗き見ることができました。
