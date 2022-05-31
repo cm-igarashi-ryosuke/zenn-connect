@@ -14,7 +14,7 @@ JavaScript製のYAMLパーサーライブラリである[js-yaml](https://github
 
 ## YAMLの仕様
 
-今回調査するまで知らなかったのですが、YAMLの仕様には[スカラー型](https://yaml.org/type/)が定義されています。なぜかというと、YAMLはテキストファイルであると同時に、アプリケーションの**ネイティブデータ構造を表す**ためのデータでもあるからです。
+今回調査するまで知らなかったのですが、YAMLの仕様には[スカラー型](https://yaml.org/type/)が定義されています。なぜかというと、YAMLはテキストファイルであると同時に、アプリケーションの**ネイティブデータ構造を表す**ためのデータでもあるからです。（※ただし型をどこまでサポートするかどうかはパーサーの実装次第です。詳しくは追記を読んでください。）
 
 > YAML is both a text format and a method for presenting any native data structure in this format.
 
@@ -113,6 +113,54 @@ js-yamlは[読み込みオプション](https://github.com/nodeca/js-yaml#load-s
 この内、`CORE_SCHEMA(JSON_SCHEMA)`、つまりJSONは、timestampをサポートしていないので、YAMLファイルのtimestamp型は文字列として解析します。
 
 ただしtimestamp以外にもJSONがサポートしていない型はすべて文字列として解析されてしまうことに注意してください。もしいずれのschemaでも要求にマッチしない場合、独自でschemaを作ることも[できるよう](https://github.com/nodeca/js-yaml/issues/161#issuecomment-72711349)です。
+
+## (追記) YAMLの仕様におけるschemaについて
+
+後になって気付いたのですが、これらのschemaはYAMLパーサーが実装すべき仕様として、[YAMLの仕様に定義](https://yaml.org/spec/1.2-old/spec.html#Schema)されていました。せっかくなので軽く確認しておきたいと思います。
+
+### Failsafe Schema
+
+> The failsafe schema is guaranteed to work with any YAML document. It is therefore the recommended schema for generic YAML tools. A YAML processor should therefore support this schema, at least as an option.
+
+引用: [https://yaml.org/spec/1.2-old/spec.html#id2802346](https://yaml.org/spec/1.2-old/spec.html#id2802346)
+
+Failsafe SchemaはどのようなYAMLでも機能することが保証されているschemaです。js-yamlではすべてをstringとして読み込むことでこのschemaをサポートしているのですね。
+
+### JSON Schema
+
+> The JSON schema is the lowest common denominator of most modern computer languages, and allows parsing JSON files. A YAML processor should therefore support this schema, at least as an option. It is also strongly recommended that other schemas should be based on it.
+
+引用: [https://yaml.org/spec/1.2-old/spec.html#id2803231](https://yaml.org/spec/1.2-old/spec.html#id2803231)
+
+JSON SchemaはJSONとの互換性があり、他のスキーマのベースとなることが推奨されています。
+
+### Core Schema
+
+> The Core schema is an extension of the JSON schema, allowing for more human-readable presentation of the same types. This is the recommended default schema that YAML processor should use unless instructed otherwise. It is also strongly recommended that other schemas should be based on it.
+
+引用: [https://yaml.org/spec/1.2-old/spec.html#id2804923](https://yaml.org/spec/1.2-old/spec.html#id2804923)
+
+Core SchemaはJSON Schemaの拡張であり、ヒューマン・リーダブルなプレゼンテーションを可能にするということです。
+
+どういうことかというと、例えばJSON Schemaではnull型は `null` しか許容されませんが、Core Schemaでは `null`, `Null`, `NULL`, `~` がnull型として解析されます。
+
+ちなみに、js-yamlではJSON Schemaの厳密さはサポートされておらず、Core Schemaと同じ基準で実装されているようです。
+
+https://github.com/nodeca/js-yaml/blob/master/lib/schema/json.js#L1-L6
+
+さらに、Core SchemaがYAMLプロセッサー（パーサー）が使用する推奨のデフォルトschemaであると記述されています。js-yamlは更に拡張されたschemaがデフォルトなので、このあたりが少し標準仕様と違いますね。
+
+ja-yamlのデフォルトschemaのコメントにも、このようにCore Schemaを拡張したものであると説明されています。
+
+https://github.com/nodeca/js-yaml/blob/master/lib/schema/default.js#L1-L5
+
+### Other Schemas
+
+> It is strongly recommended that such schemas be based on the core schema defined above. In addition, it is strongly recommended that such schemas make as much use as possible of the the YAML tag repository at http://yaml.org/type/. This repository provides recommended global tags for increasing the portability of YAML documents between different applications.
+
+引用: [https://yaml.org/spec/1.2-old/spec.html#id2805770](https://yaml.org/spec/1.2-old/spec.html#id2805770)
+
+これらのschema以外にも、Core SchemaをベースにしつつTagを用いて言語特有のデータ構造を拡張したschemaにしても良いと書いてあります。js-yamlのデフォルトschemaは、まさにこの[Type](http://yaml.org/type/)の仕様をサポートしているわけですね。
 
 ## おわり
 
