@@ -14,7 +14,7 @@ JavaScript製のYAMLパーサーライブラリである[js-yaml](https://github
 
 ## YAMLの仕様
 
-今回調査するまで知らなかったのですが、YAMLの仕様には[スカラー型](https://yaml.org/type/)が定義されています。なぜかというと、YAMLはテキストファイルであると同時に、アプリケーションの**ネイティブデータ構造を表す**ためのデータでもあるからです。（※ただし型をどこまでサポートするかどうかはパーサーの実装次第です。詳しくは追記を読んでください。）
+今回調査するまで知らなかったのですが、YAMLの仕様には[スカラー型](https://yaml.org/type/)が定義されています。なぜかというと、YAMLはテキストファイルであると同時に、アプリケーションの**ネイティブデータ構造を表す**ためのデータでもあるからです。（※ただし型をどこまでサポートするかどうかはパーサーの実装次第です。詳しくは[追記](https://zenn.dev/bisque/articles/yaml-type-spec#(%E8%BF%BD%E8%A8%98)-yaml%E3%81%AE%E4%BB%95%E6%A7%98%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8Bschema%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6)を読んでください。）
 
 > YAML is both a text format and a method for presenting any native data structure in this format.
 
