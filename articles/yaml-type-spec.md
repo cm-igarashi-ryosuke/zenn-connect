@@ -150,7 +150,7 @@ https://github.com/nodeca/js-yaml/blob/master/lib/schema/json.js#L1-L6
 
 さらに、Core SchemaがYAMLプロセッサー（パーサー）が使用する推奨のデフォルトschemaであると記述されています。js-yamlは更に拡張されたschemaがデフォルトなので、このあたりが少し標準仕様と違いますね。
 
-ja-yamlのデフォルトschemaのコメントにも、このようにCore Schemaを拡張したものであると説明されています。
+js-yamlのデフォルトschemaのコメントにも、このようにCore Schemaを拡張したものであると説明されています。
 
 https://github.com/nodeca/js-yaml/blob/master/lib/schema/default.js#L1-L5
 
