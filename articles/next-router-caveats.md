@@ -40,15 +40,15 @@ Next.jsを使い始めたばかりで、公式のドキュメントを読んで�
 
 ### 1. Static Optimizationで生成されたhtml（Pre-rendering）では `query` は `{}` になる
 
-(Automatic )Static Optimizationはビルド時に行われる処理でした。ビルド時点では、QueryStringはありませんので `{}` になります。
+Automatic Static Optimizationはビルド時に行われる処理でした。ビルド時点では、QueryStringはありませんので `{}` になります。
 
-`query` を取るにはクライアント側で初回（Pre-rendering）のレンダリングが終わってから取る必要があります。これは、`useEffect` で `router.isReady` の変化を検出して判定することができます。
+`query` を参照するには、クライアント側で初回（Pre-rendering）のレンダリングが終わってから参照する必要があります。これは、`useEffect` で `router.isReady` の変化を検出して判定することができます。
 
 ### 2. Static Optimizationで生成されたhtml（Pre-rendering）に `asPath` を埋め込んではいけない
 
 `asPath` はQueryStringを含むpathですので、 `query` と同様のことが言えます。
 
-(Automatic )Static Optimizationされた時点ではQueryStringはありませんので、Pre-renderingの時点で参照してDOMに埋め込んでしまうと、実際にリクエストされた時のパスと異なる文字列になってしまいます。
+Automatic Static Optimizationされた時点ではQueryStringはありませんので、Pre-renderingの時点で参照してDOMに埋め込んでしまうと、実際にリクエストされた時のパスと異なる文字列になってしまいます。
 
 回避方法も`query`と同様で、`useEffect` で `router.isReady` の変化を検出して、`true` になってから参照するようにします。
 
@@ -155,12 +155,12 @@ const Home: NextPage = () => {
 
 この状態で、`http://localhost:3000/?q=hello` のようにQueryStringをつけてアクセスすると、`Error: Text content does not match server-rendered HTML.` といったエラーが発生します。
 
-これを回避するためには、`useEffect`を使って、`isReady`がtrueになってから値を取り出すようにすれば良いです。
+これを回避するためには、`useEffect`を使って、`isReady`が`true`になってから値を取り出すようにすれば良いです。
 
 ```typescript
 const Home: NextPage = () => {
   const { isReady, query, asPath } = useRouter()
-  const [q, setQ] = useState<string>()
+  const [q, setQ] = useState<string>('')
   const [currentPath, setCurrentPath] = useState<string>('')
 
   useEffect(() => {
