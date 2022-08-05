@@ -3,7 +3,7 @@ title: Automatic Static Optimizationされたページでのnext/routerの注意
 emoji: "🫥"
 type: "tech"
 topics: [nextjs]
-published: false
+published: true
 --- 
 
 ## 記事の概要
@@ -24,7 +24,7 @@ Next.jsを使い始めたばかりで、公式のドキュメントを読んで�
 
 ## Automatic Static Optimization とは
 
-[Automatic Static Optimization](https://nextjs.org/docs/advanced-features/automatic-static-optimization)とは、ビルド時に、サーバー側の処理を伴わない（`getServerSideProps` や `getInitialProps` が存在しない）ページをhtmlファイルとして生成し、そうでないページをjsファイルとして生成する、という機能です。アプリケーション全体でビルドするのではなく、**ページ単位で最適なビルドにしてくれる**ということです。ページ単位で最適なビルドにすることで、サーバー側の処理を伴わないページは既にレンダリングが可能な状態のhtmlを返すことができるので、より高速にレンダリングされるようになります。ここで生成されるhtmlは、後述するPre-renderingと呼ばれる状態のhtmlになります。
+[Automatic Static Optimization](https://nextjs.org/docs/advanced-features/automatic-static-optimization)とは、ビルド時に、サーバー側の処理を伴わない（`getServerSideProps` や `getInitialProps` が存在しない）ページをhtmlファイルとして生成し、そうでないページをjsファイルとして生成する、という機能です。アプリケーション全体でビルドするのではなく、**ページ単位で最適なビルドにしてくれる**ということです。ページ単位で最適なビルドにすることで、サーバー側の処理を伴わないページは既にレンダリングが可能な状態のhtmlを返すことができるので、応答速度が上がります。ここで生成されるhtmlは、後述するPre-renderingと呼ばれる状態のhtmlになります。
 
 ## Pre-rendering とは
 
