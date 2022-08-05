@@ -3,7 +3,7 @@ title: Automatic Static Optimizationされたページでのnext/routerの注意
 emoji: "🫥"
 type: "tech"
 topics: [nextjs]
-published: true
+published: false
 --- 
 
 ## 記事の概要
