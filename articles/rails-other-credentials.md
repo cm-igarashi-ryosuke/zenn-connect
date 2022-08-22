@@ -4,6 +4,7 @@ emoji: "🔐"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["rails"]
 published: true
+publication_name: team_zenn
 ---
 
 Railsには、APIキーなどのシークレット情報を安全に管理するための機能があります。

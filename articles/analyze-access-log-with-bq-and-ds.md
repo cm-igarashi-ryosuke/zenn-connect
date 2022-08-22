@@ -4,6 +4,7 @@ emoji: "📈"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["googlecloud","bigquery","datastudio"]
 published: true
+publication_name: team_zenn
 ---
 
 最近、稼働中のアプリケーションが「たまに遅い」という事象に遭遇しました。体感的には、リクエストが10回に1回程度、ほんの一瞬ですが引っかかりがあるという感じです。原因を探るため、リクエストログをBigQueryとData Studioを使って分析し、無事に原因を特定することができました。とても簡単に設定でき継続的に使える方法なので、紹介したいと思います。

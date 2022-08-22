@@ -4,6 +4,7 @@ emoji: "🫥"
 type: "tech"
 topics: [nextjs]
 published: true
+publication_name: team_zenn
 --- 
 
 ## 記事の概要

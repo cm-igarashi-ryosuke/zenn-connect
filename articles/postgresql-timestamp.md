@@ -4,6 +4,7 @@ emoji: "🪷"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ['postgresql']
 published: true
+publication_name: team_zenn
 ---
 
 PostgreSQLにおけるTimeZoneの挙動がよく分かっていなかったので、詳しく調べてみました。
