@@ -1,6 +1,6 @@
 ---
 title: "Google Cloudの利用費を節約できる確約利用割引を購入してみた"
-emoji: "👏"
+emoji: "🤗"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["googlecloud", "cud", "cloudrun", "cloudsql"]
 published: false
