@@ -4,6 +4,7 @@ emoji: "👏"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["googlecloud", "cud", "cloudrun", "cloudsql"]
 published: false
+publication_name: team_zenn
 ---
 
 確約利用割引（CUD: Commited Use Discount）は、一定の期間、一定の量のリソースを利用することを確約（コミットメント）することで適用される割引です。今回は、Zennで利用している **Cloud Run** と **Cloud SQL** で確約利用割引を購入してみましたので、記事にしたいと思います。
