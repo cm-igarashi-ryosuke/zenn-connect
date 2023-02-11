@@ -3,7 +3,7 @@ title: "JavaScriptでインラインコメント機能を実装する"
 emoji: "✍️"
 type: "tech"
 topics: ["javascript"]
-published: false
+published: true
 ---
 
 技術検証として、簡易的なインラインコメント機能を実装してみました。インラインコメントとは、Notion や Google Docs にあるような、テキストの一部にコメントを付ける機能のことです。
@@ -60,6 +60,10 @@ published: false
 1. テキスト1行の1文字ごとに `{mask: number, depth: number}[]` という構造の配列に変換する（実装内の `function getMask`）
 2. この配列をレンダリングするNode単位にまとめて `{mask: number, depth: number, text: string}[]` という構造の配列にする（実装内の `function getTextBlocks`）
 3. これをHTMLに変換する（実装内の `function renderText`）
+
+文字だと少しわかりにくいかと思うので図にしてみました。`mask` は一番上に重なっているコメントのidと思ってください（名前が良くなかった）。`depth` はコメントの重なり具合を表しています。最後にできた配列 `textBlocks` からHTMLを生成しています。
+
+![](/images/articles/inline-comment-js/mask.png)
 
 このあたりの実装は、NotionをWebブラウザ上で操作して、コメントを追加したときにHTMLがどう変わったかを観察し、その挙動を真似しました。
 
