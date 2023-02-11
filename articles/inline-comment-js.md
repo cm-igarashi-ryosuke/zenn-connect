@@ -8,23 +8,25 @@ published: false
 
 技術検証として、簡易的なインラインコメント機能を実装してみました。インラインコメントとは、Notion や Google Docs にあるような、テキストの一部にコメントを付ける機能のことです。
 
-検証の課題としては、Webページ上で**どうやってユーザーの選択範囲を取得するのか**ということでした。結論としては、Web APIの [Selectionオブジェクト](https://developer.mozilla.org/ja/docs/Web/API/Selection) を使うことで、選択範囲にあるNodeを取得でき、これを使って選択範囲の位置を特定できました。思ったよりも早く結論が出たので、コメントのハイライトや複数のコメントの重なりの表現なども試してみました。
+検証の課題としては、Webページ上で**どうやってユーザーの選択範囲を取得するのか**ということでした。結論としては、Web APIの [Selectionオブジェクト](https://developer.mozilla.org/ja/docs/Web/API/Selection) を使うことで、選択範囲にあるNodeを取得でき、これを使って選択範囲の位置を特定できました。思ったよりも早く結論が出たので、発展としてコメントのハイライトや複数のコメントの重なりの表現なども試してみました。
 
 ## できたもの
 
-Resultのタブで動作が確認できます。
+![](/images/articles/inline-comment-js/demo.gif)
 
-@[jsfiddle](https://jsfiddle.net/bisque/a51fud6m/777/)
+実際の挙動とソースコードは 👇 で確認できます。
+
+@[jsfiddle](https://jsfiddle.net/bisque/a51fud6m/781/)
 
 ## 解説
 
-実装はすべてPure JavaScriptです。（思ったよりDOMの操作が多く、途中でReactを使わなかったことを後悔しましたが、ブラウザのWeb APIをゴリゴリ書くのもいい経験だったと思います。）
+実装はすべてPure JavaScriptです。（思ったよりDOMの操作が多く、途中でReactを使わなかったことを後悔しましたが、ブラウザのWeb APIをゴリゴリ書くのもいい経験になったと思います。）
 
 ### 選択範囲の取得
 
 先に述べたとおり、Selectionオブジェクトを使うことで取得できます。
 
-まずはシンプルな例です。
+まずはシンプルな例です。（Resultのタブで操作できます。）
 
 @[jsfiddle](https://jsfiddle.net/bisque/46j0prne/17/)
 
@@ -32,7 +34,7 @@ Resultのタブで動作が確認できます。
 
 `selection.anchorOffset` が選択範囲の先頭、 `selection.focusOffset` が選択範囲の末尾になります。注意点として、先頭・末尾はテキストの向きとは関係なく、選択を開始した始点が先頭、選択を終了した終点が末尾になることです。
 
-次に、少し複雑な例を見てみましょう。この例では、テキストに装飾が施されています。ちょうど、この次に示すテキストがハイライトされているような状態です。
+次に、少し複雑な例を見てみましょう。この例では、テキストに装飾が施されています。ちょうど、この次に示すテキストがハイライトされているような状態です。（Resultのタブで操作できます。）
 
 @[jsfiddle](https://jsfiddle.net/bisque/k1ws4ucm/12/)
 
@@ -56,11 +58,11 @@ Resultのタブで動作が確認できます。
 今回の実装ではこれを以下のように行いました。
 
 1. テキスト1行の1文字ごとに `{mask: number, depth: number}[]` という構造の配列に変換する（実装内の`function getMask`）
-2. この配列をNode単位にまとめて `{mask: number, depth: number, text: string}[]` という構造の配列にする（実装内の`function getTextBlocks`）
+2. この配列をレンダリングするNode単位にまとめて `{mask: number, depth: number, text: string}[]` という構造の配列にする（実装内の`function getTextBlocks`）
 3. これをHTMLに変換する（実装内の`function renderText`）
 
 このあたりの実装は、NotionをWebブラウザ上で操作して、コメントを追加したときにHTMLがどう変わったかを観察し、その挙動を真似しました。
 
 ## おわり
 
-
+ブラウザのWeb APIを使ってインラインコメント機能の技術検証を行いました。Web APIを使うことでブラウザやユーザーの様々な情報を取得できることが分かり勉強になりました。
