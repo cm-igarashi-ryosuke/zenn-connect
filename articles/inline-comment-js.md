@@ -14,7 +14,7 @@ published: true
 
 ![](/images/articles/inline-comment-js/demo.gif)
 
-実際の挙動とソースコードは👇で確認できます。
+実際の挙動とソースコードは👇で確認できます。（Resultタブで操作できます。）
 
 @[jsfiddle](https://jsfiddle.net/bisque/a51fud6m/781/)
 
