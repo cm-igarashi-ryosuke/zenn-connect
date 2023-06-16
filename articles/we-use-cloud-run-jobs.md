@@ -4,7 +4,7 @@ emoji: "🦑"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["rails", "gcp", "appengine", "cloudrun", "cloudrunjobs"]
 publication_name: team_zenn
-published: false
+published: true
 ---
 
 ## はじめに
@@ -27,7 +27,7 @@ App Engineのラインタイムは、[Rubyランタイム](https://cloud.google.
 
 Cloud Run Jobsは、昨年のCloud Run移行の後で登場したサービスです。Cloud Runと同じくコンテナを実行するサービスですが、HTTPリクエストを受け付けるWebサービスではなく、スケジューラーによってトリガーされ、コンテナを起動し処理を実行するサービスです。
 
-コンテナのイメージは既にCloud Runで使用しているものを利用し、Cloud Run Jobsで実行する際のコマンドと引数だけを変更するようにしました。
+Jobのコンテナのイメージは既にCloud Run Serviceで使用しているものを利用し、Jobで実行する際のコマンドと引数だけを変更するようにしました。
 
 以下は、Cloud Buildの設定ファイルに追加したCloud Run Jobsの設定です。
 
@@ -65,7 +65,7 @@ Cloud Run Jobsは、昨年のCloud Run移行の後で登場したサービスで
   # ...
 ```
 
-このようにCloud Run JobsのJobをデプロイするステップを追加することで、DBマイグレーションをデプロイプロセスの中で行うことができます（本番環境ではJobをデプロイするだけ実行は手動トリガーとしています）
+このように、デプロイプロセスの中にCloud Run JobsのJobをデプロイするステップを追加することで、DBマイグレーションをデプロイプロセスの中で行うことができます（本番環境ではJobをデプロイするだけで実行は手動トリガーとしています）
 
 また、Rakeコマンドを実行する際は、Google Cloudのコンソールから `args` 部分を書き換えて実行するか、
 
@@ -91,7 +91,7 @@ Is the server running locally and accepting
 connections on Unix domain socket "/cloudsql/zenn-dev-integration:us-central1:xxx/.s.PGSQL.5432"?
 ```
 
-調査に当たり、すぐにこちらの記事が見つかり、参考になりました。（感謝）
+調査に当たり、すぐにこちらの記事が見つかり、参考になりました。感謝✨
 
 https://qiita.com/tehu/items/d86ef3bb7625f699c763
 
