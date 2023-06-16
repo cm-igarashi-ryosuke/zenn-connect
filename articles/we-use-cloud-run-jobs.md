@@ -2,7 +2,7 @@
 title: "Railsコマンドの実行環境をCloud Run Jobsに移行しました"
 emoji: "🦑"
 type: "tech" # tech: 技術記事 / idea: アイデア
-topics: ["rails", "gcp", "appengine", "cloudrun", "cloudrunjobs"]
+topics: ["rails", "gcp", "gae", "cloudrun", "cloudrunjobs"]
 publication_name: team_zenn
 published: true
 ---
