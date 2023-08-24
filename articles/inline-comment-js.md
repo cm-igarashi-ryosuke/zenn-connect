@@ -16,7 +16,7 @@ published: true
 
 実際の挙動とソースコードは👇で確認できます。（Resultタブで操作できます。）
 
-@[jsfiddle](https://jsfiddle.net/bisque/a51fud6m/781/)
+@[jsfiddle](https://jsfiddle.net/bisque/a51fud6m/783/)
 
 ## 解説
 
@@ -28,7 +28,7 @@ published: true
 
 まずはシンプルな例です。（👇のResultのタブで操作できます。）
 
-@[jsfiddle](https://jsfiddle.net/bisque/46j0prne/17/)
+@[jsfiddle](https://jsfiddle.net/bisque/46j0prne/18/)
 
 ブラウザ上でテキストを範囲選択したイベントを取るには、`mouseup` イベントをリッスンします。選択範囲が閉じている（範囲選択でない）かを判断するには、`selection.isCollapsed` を使うことができます。
 
@@ -36,7 +36,7 @@ published: true
 
 次に、少し複雑な例を見てみましょう。この例では、テキストに装飾が施されています。ちょうど、この次に示すテキストがハイライトされているような状態です。（👇のResultのタブで操作できます。）
 
-@[jsfiddle](https://jsfiddle.net/bisque/k1ws4ucm/12/)
+@[jsfiddle](https://jsfiddle.net/bisque/k1ws4ucm/14/)
 
 このようにテキストが単純なTextNodeだけのHTMLでない場合、最初の例で説明した`selection.anchorOffset` と `selection.focusOffset` だけでは選択範囲を特定できない場合があります。これは、`selection.anchorOffset` は`selection.anchorNode`の中の開始位置、`selection.focusOffset`は`selection.focusNode`の中の終了位置を表すからです。
 
