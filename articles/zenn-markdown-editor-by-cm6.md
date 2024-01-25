@@ -4,6 +4,7 @@ emoji: "🕌"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: [codemirror, react]
 published: false
+publication_name: team_zenn
 ---
 
 Zennでは、「記事」や「本のチャプター」のMarkdownエディタのベースに[CodeMirror](https://codemirror.net/)というライブラリを使っています。これまではCodeMirrorのv5を使っていた（正確にはv5に依存するラッパーライブラリを使っていた）のですが、古いバージョンを使い続けるリスク解消と更なるエディタの拡張性を得るため、CodeMirrorのv6にアップグレードすることにしました。
