@@ -228,7 +228,7 @@ export const useMarkdownEditor = ({
         // 本文の保存
         key: 'Mod-s',
         run() {
-          save().then();
+          save();
           return true;
         },
       },
@@ -427,7 +427,7 @@ Zennのエディタでは、画像アップロードボタンからの他に、�
 
                 imageUpload(file, (url) => {
                   insertText(url);
-                }).then();
+                });
               }
             }
           } else {
@@ -437,7 +437,7 @@ Zennのエディタでは、画像アップロードボタンからの他に、�
 
               imageUpload(file, (url) => {
                 insertText(url);
-              }).then();
+              });
             }
           }
         },
@@ -458,7 +458,7 @@ Zennのエディタでは、画像アップロードボタンからの他に、�
                 },
               });
               view.dispatch(transaction);
-            }).then();
+            });
           }
         },
       }),
