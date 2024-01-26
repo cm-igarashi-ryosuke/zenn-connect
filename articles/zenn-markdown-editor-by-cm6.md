@@ -29,9 +29,21 @@ CodeMirrorはv5とv6で大きく仕様が変わっています。CodeMirrorの�
 
 この記事を読み進めるために、CodeMirrorのシステムのうち特に重要な部分を、私の理解の範囲でざっくり説明します。
 
+#### コアモジュールと設計思想
+
+CodeMirrorのコアモジュールは、以下の3つに分けられています。
+
+- `@codemirror/state`
+- `@codemirror/view`
+- `@codemirror/commands`
+
+`state` はエディタの状態や、状態を更新するデータ構造を定義します。`view` はエディタの状態を表示したり、ユーザーの操作を状態を更新するデータ構造に変換するためのコンポーネントです。`command`は多くの編集コマンドとそれらのキー バインディングを定義します。
+
+エディタの状態（`state`）はイミュータブルであり、エディタが新しい状態に移行しても古い状態はそのまま残ります。これにより、エディタの状態の変更を扱いやすくなっています。また、状態に関する操作は純粋な関数として与えられます。
+
 #### 状態管理と更新
 
-こちらは[System Guide](https://codemirror.net/docs/guide/)のState and Updatesで紹介されている図です。
+こちらは[System Guide](https://codemirror.net/docs/guide/)のState and Updatesで紹介されている、一般的なユーザー操作時のデータフローです。
 
 ```mermaid
 graph LR
@@ -45,23 +57,24 @@ graph LR
   D --> A
 ```
 
-`view` がブラウザに表示されているエディタだと思ってください。`view` は `state` というイミュータブルな状態を持っており、`state` の内容をブラウザにレンダリングしています。`view` はDOMイベント（カーソル移動やキー入力など）を監視し、イベントが発生すると、 `transaction` という状態を更新するためのデータを作成します。 `transaction` から新たな状態（ `new state`） が `view` にディスパッチされると、`view` の `state` が更新されレンダリングされます。
 
-この流れを理解しておくと、拡張を作るときに役立ちます。
+`view` がブラウザに表示されているエディタだと思ってください。`view` は `state` と呼ばれる状態を持っており、`state` の内容をブラウザにレンダリングしています。`view` はDOMイベント（カーソル移動やキー入力など）を監視し、イベントが発生すると、 `transaction` という状態を更新するためのデータを作成します。 `transaction` から新たな状態（ `new state`） が `view` にディスパッチされると、`view` の `state` が更新されレンダリングされます。
+
+この流れを理解しておくと、「拡張」によりエディタの動きをカスタマイズするときに役に立ちます。
 
 #### 拡張
 
-CodeMirrorのコア機能は必要最小限に抑えられており、多くの機能は拡張として提供されています。拡張はあらゆるカスタマイズができると説明されていますが、私は主に2つあると思います。一つは、上記のループの `transaction` や `new state` に介入してあらゆる動きをカスタマイズすることができます。もう一つは、`view` のレンダリングルールに介入してあらゆる表示をカスタマイズできます。おそらく拡張は関数であり、コア機能のループに差し込まれる形で動作していると想像しています。
+CodeMirrorのコア機能は必要最小限に抑えられており、多くの機能は拡張として提供されています。拡張は、単なるオプションの設定から、`state` オブジェクトの新しいフィールドの定義、エディタのスタイル設定、`view` へのカスタム命令コンポーネントの注入まで、あらゆることを行うことができますと説明されています。
+
+システム的に見ると、拡張は上記のデータフローの `transaction` や `new state` に介入してユーザー操作をカスタマイズしたり、`view` のレンダリングルールに介入して表示をカスタマイズしたりすることができます。
 
 拡張も `state` として管理され、動的に変更することができます。
 
-## ZennのMarkdownエディタの作り方
+## CodeMirrorをReactで扱う準備
 
-ここからはZennのMarkdownエディタを作るために、CodeMirrorの主なカスタマイズを紹介します。
+### ミニマムなHookの実装
 
-### CodeMirrorをReactで扱う
-
-ZennはReactで実装されているため、まずはCodeMirrorをhookにして扱いやすくします。
+ZennはReactで実装されているため、まずはCodeMirrorをHookにしてReactで扱いやすくします。ここでは `useMarkdownEditor` というHookを実装します。
 
 ```typescript:hook側の実装
 export const useMarkdownEditor = (props: UseMarkdownEditorProps) => {
@@ -102,37 +115,14 @@ export const useMarkdownEditor = (props: UseMarkdownEditorProps) => {
   );
 ```
 
-ミニマムな実装例ですが、これでコンポーネントのdiv内にCodeMirrorのエディタが表示されます。この状態では、機能的にはHTMLのtextareaとあまり変わりありません。
+ミニマムな実装例ですが、これでコンポーネントのdiv内にCodeMirrorのエディタが表示されます。この状態では、ぱっとみHTMLのtextareaとあまり変わりありません。
 
 ![](/images/articles/zenn-markdown-editor-by-cm6/minimum_editor.png)
 *ミニマムな状態*
 
-#### （余談）Reactでコードエディタを作りたいならreact-codemirrorを使う手もあり
-
-CodeMirrorをReactのhookにするため、当初、CodeMirror v6のラッパーライブラリである[react-codemirror](https://github.com/uiwjs/react-codemirror)を利用しました。react-codemirrorからは `useCodeMirror` というhookが提供されています。
-
-これを使っても良かったんですが、react-codemirrorでは[basicSetup](https://codemirror.net/docs/ref/#codemirror.basicSetup)という「いくつかの拡張を組み合わせて最初からいい感じのコードエディタにしてくれる拡張」がデフォルトで有効になっており、Zennの場合はほとんどの項目を無効化する必要がありました。また、その他の部分でもなるべくライブラリの機能に依存しないように実装したので、hookを自前で実装することでライブラリをはがすことができました。
-
-なお、react-codemirrorのソースコードは、CodeMirrorをhookにしたりカスタマイズするのにとても参考になりました。
-
 ### テキストの初期化と保存
 
-エディタにテキストをロードしたり、編集したテキストをコンポーネント側で保存したりできるようにします。
-
-```typescript:コンポーネント側の実装
-  const [doc, setDoc] = useState<null | string>(null);
-  
-  // docを初期化する...
-
-  const { editor } = useMarkdownEditor({
-    doc,
-    setDoc,
-  });
-
-  return (
-    <div ref={editor} />
-  );
-```
+Hookに関数を追加することで、エディタにテキストをロードしたり、編集したテキストをコンポーネント側で保存したりする機能を追加していきます。
 
 ```typescript:hook側の実装
 export const useMarkdownEditor = ({
@@ -171,7 +161,46 @@ export const useMarkdownEditor = ({
 };
 ```
 
-`doc` がエディタのテキストと同期されるようになったので、あとはコンポーネント側の任意のタイミングでdocを保存すればOKです。
+`useState` で定義された `doc` がエディタのテキストと同期されるようになったので、あとはコンポーネント側の任意のタイミングでdocを保存する機能を実装することができます。
+
+```typescript:コンポーネント側の実装
+  const [doc, setDoc] = useState<null | string>(null);
+  
+  const save = useCallback(() => {
+    // ここでdocを保存する
+  }, [doc]);
+
+  const { editor } = useMarkdownEditor({
+    doc,
+    setDoc,
+  });
+
+  return (
+    <div ref={editor} />
+  );
+```
+
+### （余談）Reactでコードエディタを作りたいならreact-codemirrorを使う手もあり
+
+CodeMirrorをReactで扱うため、当初はCodeMirror v6のラッパーライブラリである[react-codemirror](https://github.com/uiwjs/react-codemirror)を利用しました。react-codemirrorからは `useCodeMirror` というHookが提供されています。
+
+react-codemirrorでは[basicSetup](https://codemirror.net/docs/ref/#codemirror.basicSetup)という「いくつかの拡張を組み合わせて最初からいい感じのコードエディタにしてくれる拡張」がデフォルトで有効になっており、ZennのMarkdownエディタの場合はほとんどの項目を無効化する必要がありました。また、その他の部分でもなるべくライブラリの機能に依存しないように実装したので、最終的にHookを自前で実装することでこちらのライブラリへの依存はなくなりました。
+
+なお、react-codemirrorのソースコードは、CodeMirrorをHookにしたりカスタマイズするのにとても参考になりました。
+
+## ZennのMarkdownエディタの作り方
+
+ここからはZennのMarkdownエディタを作るために、CodeMirrorの拡張による主なカスタマイズを紹介します。
+
+主なカスタマイズは以下のとおりです。
+
+- キーマップ（ショートカットキー）とそれに対応する処理の登録
+- ドラッグ＆ドロップやペーストからの画像アップロード機能
+- Markdownのシンタックスハイライト
+- エディタのスタイル設定
+- 標準で提供されている拡張（オプション）の設定
+
+これらの実装方法について、ひとつずつ説明していきます。
 
 ### キーマップ（ショートカットキー）の登録
 
@@ -299,35 +328,7 @@ Mod-p、Mod-i はエディタの外側のコンポーネントの操作です。
 ![](/images/articles/zenn-markdown-editor-by-cm6/custom_keymap.gif)
 *Mod-b, Mod-i, Mod-pの様子（この次に説明する"外部からテキストを挿入する"も適用されています）*
 
-#### 発生した問題
-
-エディタからキーマップで埋め込みモーダルを開き、モーダルを閉じるとスクロール位置がTOPに戻るという事象が発生しました。ワークアラウンドとして、モーダルを閉じたときにエディタをフォーカスすることで解決しました。
-
-```typescript:hook側の実装
-  // Editorをフォーカスする
-  const focusToEditor = useCallback(() => {
-    if (!view) return;
-    view.focus();
-  }, [view]);
-
-  return {
-    editor,
-    focusToEditor,
-  };
-```
-
-原因は不明ですが、キーマップでモーダルを開くときにエディタに何らかのイベント（状態の更新）が発生しており、モーダルを閉じたタイミングでエディタがフォーカスを失っているため、正しいスクロール位置を計算できずTOPに戻ってしまったのではないかと推測しています。
-
-このように原因不明の問題が発生したときは、エディタに発生したイベントをトレースしてみると手がかりが得られるかもしれません。
-
-```typescript:hook側の実装
-  // これをextensionsに追加する
-  const updateListener = EditorView.updateListener.of((update) => {
-    console.log('update', update);
-  });
-```
-
-### 外部からテキストを挿入する
+#### 外部からテキストを挿入する
 
 埋め込みモーダルから、カーソル位置にテキストを挿入するために、hookから以下の関数を提供します。
 
@@ -356,6 +357,34 @@ Mod-p、Mod-i はエディタの外側のコンポーネントの操作です。
 ```
 
 `view.state.selection` が、現在のカーソル位置を示します。CodeMirrorはマルチカーソル・複数選択範囲に対応していますが、Zennではマルチカーソルは使わないので `main` でカーソル位置を取得しています。
+
+#### 発生した問題
+
+エディタからキーマップで埋め込みモーダルを開き、モーダルを閉じるとスクロール位置がTOPに戻るという事象が発生しました。ワークアラウンドとして、モーダルを閉じたときにエディタをフォーカスすることで解決しました。
+
+```typescript:hook側の実装
+  // Editorをフォーカスする
+  const focusToEditor = useCallback(() => {
+    if (!view) return;
+    view.focus();
+  }, [view]);
+
+  return {
+    editor,
+    focusToEditor,
+  };
+```
+
+原因は不明ですが、キーマップでモーダルを開くときにエディタに何らかのイベント（状態の更新）が発生しており、モーダルを閉じたタイミングでエディタがフォーカスを失っているため、正しいスクロール位置を計算できずTOPに戻ってしまったのではないかと推測しています。
+
+このように原因不明の問題が発生したときは、エディタに発生したイベントをトレースしてみると手がかりが得られるかもしれません。
+
+```typescript:hook側の実装
+  // これをextensionsに追加する
+  const updateListener = EditorView.updateListener.of((update) => {
+    console.log('update', update);
+  });
+```
 
 ### 画像アップロード
 
@@ -557,6 +586,6 @@ CodeMirrorは、様々なプログラミング言語の拡張を提供してお�
 
 ## おわりに
 
-CodeMirror v6について調べ始めた頃、具体的な情報が少なくライブラリの使い方が分からずに苦労したので本記事を書きました。これからCodeMirror v6を使ってエディタを作る人の参考になれば幸いです。
+CodeMirror v6について調べ始めた頃、具体的な情報が少なくライブラリの使い方が分からずに苦労したので本記事を書きました。本記事の内容は、CodeMirrorの全体から見るとほんのさわりでしかありませんが、これからCodeMirror v6を使ってエディタを作る人の参考になれば幸いです。
 
 ZennのMarkdownエディタはさらなる執筆体験の向上を目指し、引き続き開発を進めていきます。お楽しみに！
