@@ -1,9 +1,10 @@
 ---
-title: "ZennのMarkdownエディタの作り方（by CodeMirror v6）"
-emoji: "🕌"
+title: "CodeMirror v6によるZennのMarkdownエディタの作り方"
+emoji: "🪞"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: [codemirror, react]
-published: false
+published: true
+published_at: 2024-02-01 07:13
 publication_name: team_zenn
 ---
 
@@ -17,9 +18,9 @@ Zennでは、「記事」や「本のチャプター」のMarkdownエディタ�
 
 CodeMirrorはWeb上にコードエディタを実装するためのライブラリです。標準で多くのプログラミング言語に対応したシンタックスハイライトや入力補完、折りたたみ、キーマップ、マルチカーソルなど、モダンなコードエディタに必要な機能を備えています。また、様々な拡張やプラグインを使って、機能を追加・変更することができます。
 
-この拡張性を実現するために、CodeMirrorのライブラリはいくつかのコアモジュールと多くの拡張モジュールに分けられています。自分の好みに合わせたエディタを作るためには、CodeMirrorの基本的な構造を理解することが重要です。
+この拡張性を実現するために、CodeMirrorのライブラリはいくつかのコアモジュールと多くの拡張モジュールに分けられています。自分の好みに合わせたエディタを作るためには、CodeMirrorの基本的なシステム設計を理解しておくと良いです。
 
-まずはドキュメントの[System Guide](https://codemirror.net/docs/guide/)を読みましょう。ボリュームがあるので遠回りに思うかもしれませんが、急がば回れです。完全に理解できていなくても大丈夫です。これを読んでシステムの全体像を掴んでおくと、[Examples](https://codemirror.net/examples/)や[Reference Manual](https://codemirror.net/docs/ref/)など、その他のドキュメントが理解しやすくなります。
+そのために、まずはドキュメントの[System Guide](https://codemirror.net/docs/guide/)を読みましょう。これを読んでシステムの全体像を掴んでおくと、[Examples](https://codemirror.net/examples/)や[Reference Manual](https://codemirror.net/docs/ref/)など、その他のドキュメントが理解しやすくなります。
 
 :::message
 CodeMirrorはv5とv6で大きく仕様が変わっています。CodeMirrorの情報を調べるときは、バージョンに注意してください。
@@ -545,6 +546,8 @@ CodeMirrorは、様々なプログラミング言語の拡張を提供してお�
       // editorの内部
       '&.cm-editor .cm-scroller': {
         fontFamily: `'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace, 'Segoe UI Emoji'`,
+        '-webkit-font-smoothing': 'antialiased',
+        letterSpacing: '0.02em',
         fontSize: '15px',
         lineHeight: '1.8',
         color: '#000000',

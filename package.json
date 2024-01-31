@@ -3,6 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "devDependencies": {
-    "zenn-cli": "latest"
+    "zenn-cli": "^0.1.152"
   }
 }
