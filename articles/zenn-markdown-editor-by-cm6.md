@@ -143,7 +143,7 @@ export const useMarkdownEditor = ({
 
   // viewを初期化する
   useEffect(() => {
-    if (!view && container && doc) {
+    if (!view && container) {
       const state = EditorState.create({
         doc, // エディタの初期値としてdocを設定する
         extensions: [updateListener],
