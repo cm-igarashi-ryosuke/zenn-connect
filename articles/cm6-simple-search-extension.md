@@ -2,8 +2,8 @@
 title: CodeMirrorにシンプルなテキスト検索機能を実装しました
 emoji: 🔍
 type: tech
-topics: [codemirror, react]
-published: false
+topics: [codemirror]
+published: true
 publication_name: team_zenn
 ---
 
