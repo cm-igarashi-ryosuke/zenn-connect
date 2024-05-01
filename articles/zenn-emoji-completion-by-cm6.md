@@ -1,5 +1,5 @@
 ---
-title: ZennのMarkdownエディタにEmojiの入力補完機能を実装しました
+title: CodeMirrorにEmojiの入力補完機能を実装しました
 emoji: 😀
 type: tech
 topics: [codemirror, react]

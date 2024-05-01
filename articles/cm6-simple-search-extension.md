@@ -1,5 +1,5 @@
 ---
-title: ZennのMarkdownエディタにテキスト検索機能を実装しました
+title: CodeMirrorにシンプルなテキスト検索機能を実装しました
 emoji: 🔍
 type: tech
 topics: [codemirror, react]
@@ -12,6 +12,10 @@ ZennのMarkdownエディタにテキスト検索機能を実装しました。
 本記事では、[CodeMirror](https://codemirror.net/)の[@codemirror/search](https://www.npmjs.com/package/@codemirror/search)をベースに、ミニマムな検索機能の実装方法を解説します。
 
 ## なぜ検索機能を実装したのか
+
+きっかけは、以下のIssueでした。
+
+https://github.com/zenn-dev/zenn-community/issues/605
 
 ZennのMarkdownエディタに使われているCodeMirrorは、パフォーマンスの最適化のため**仮想スクロール**と呼ばれるテクニックを使いDOMを描画しています。仮想スクロールは可視範囲以外はDOMが表示されていないので、ブラウザの検索機能ではエディタ内のテキスト全体を検索することができない問題がありました。
 
@@ -48,10 +52,12 @@ https://discuss.codemirror.net/t/viewport-issues-with-cm-6/3586/2
 
 ## @codemirror/search をカスタマイズする
 
-@codemirror/searchそのまま利用すると、以下のような検索機能が表示されます。本来、CodeMirrorはソースコードのためのエディタであり、Markdownエディタに対する検索機能としてはいささか機能が過剰でした。
+@codemirror/searchをそのまま利用すると、以下のような検索機能が表示されます。
 
 ![](/images/articles/cm6-simple-search-extension/default-panel.png)
 *デフォルトの検索パネル*
+
+本来、CodeMirrorはソースコードのためのエディタなので、置換や正規表現検索などのリッチな検索も付いていました。ただ、記事執筆エディタに対する検索機能としてはいささか過剰で、Zennではシンプルに文字列の検索だけを提供したいと考えました。
 
 幸い、@codemirror/searchのExtensionには、独自の検索パネルを差し込むオプションが用意されていましたので、そちらを使って見た目と機能を調整しました。
 
