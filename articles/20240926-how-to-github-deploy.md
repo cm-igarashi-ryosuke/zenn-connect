@@ -4,11 +4,12 @@ emoji: "🌟" # 絵文字
 type: "idea" # tech: 技術記事 / idea: アイデア
 topics: ['github'] # トピック
 published: false # 公開 / 下書き
+publication_name: team_zenn # Publicationへの紐づけ
 ---
 
 ## はじめに
 
-### なぜ記事をGitHubで管理すること嬉しいのか
+### なぜ記事をGitHubで管理すると嬉しいのか
 
 エンジニアの中には、自分の記事を**自分の資産として自分の手元で管理したい**と考える人が一定います。
 
