@@ -3,7 +3,7 @@ title: "「Zennのパフォーマンスモニタリングでやっているこ�
 emoji: "🌟" # 絵文字
 type: "idea" # tech: 技術記事 / idea: アイデア
 topics: ['performance', 'nextjs'] # トピック
-published: false # 公開 / 下書き
+published: true # 公開 / 下書き
 publication_name: team_zenn # Publicationへの紐づけ
 ---
 
