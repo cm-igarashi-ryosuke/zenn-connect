@@ -1,9 +1,10 @@
 ---
 title: "Cloud Build での Next.js のビルドを最適化する"
-emoji: "🌟"
+emoji: "🦀"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: [cloudbuild, nextjs, kaniko]
-published: false
+published: true
+publication_name: team_zenn
 ---
 
 ## はじめに
@@ -130,8 +131,10 @@ Cloud Build 環境でも以下のように改善されました。
 
 これにより、**全体の処理時間が 3分40秒 から 3分20秒 程度に短縮されました**。
 
-レイヤーキャッシュを無効化したので、もはや kaniko を使う必要もなくなりました。最終的には `docker build` `docker push` を `gcr.io/cloud-builders/docker` で実行するようにに変更しました。
+レイヤーキャッシュを無効化したので、もはや kaniko を使う必要もなくなりました。最終的には `docker build` や `docker push` を `gcr.io/cloud-builders/docker` で実行するようにに変更しました。
 
-:::message
-Cloud Build で kaniko は使わない方がいいのかというと、一律でそういうわけでもなく、Zenn の バックエンドサーバーである Ruby on Rails の Docker ビルドでは、kaniko のレイヤーキャッシュを使ったほうが処理時間が短いので、引き続き利用しています。
-:::
+## おわりに
+
+結論、大量のファイルを含むレイヤーキャッシュをリモートから取得すると展開に時間がかかるということがわかりました。
+
+ただ、Cloud Build で kaniko は使わない方がいいのかというと、一律でそういうわけでもなく、Zenn の バックエンドサーバーである Ruby on Rails の Docker ビルドでは、kaniko のレイヤーキャッシュを使ったほうが処理時間が短いので、引き続き利用しています。
