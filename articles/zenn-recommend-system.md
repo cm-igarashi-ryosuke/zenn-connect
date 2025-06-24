@@ -2,8 +2,8 @@
 title: "Zennのレコメンド機能（For you）の裏側 - AIとベクトル近傍検索を使った記事のレコメンドシステムの仕組み"
 emoji: "🎁"
 type: "idea" # tech: 技術記事 / idea: アイデア
-topics: ["recommendation"]
-published: false
+topics: ["recommendation", "pgvector", "gemini", "llm", "ai"]
+published: true
 publication_name: team_zenn
 ---
 
