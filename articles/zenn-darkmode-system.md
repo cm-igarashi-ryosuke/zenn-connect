@@ -221,8 +221,8 @@ export const useTheme = () => {
 }
 
 :root[data-theme='dark-blue'] {
-    --color-background: #000;
-    --color-text: #fff;
+  --color-background: #000;
+  --color-text: #fff;
 }
 
 // コンポーネントのCSSでセマンティックカラートークンを使用
