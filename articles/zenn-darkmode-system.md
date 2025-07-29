@@ -3,7 +3,7 @@ title: Zennのダークモードを実装しました
 emoji: 🌃
 type: tech
 topics: [darkmode]
-published: false
+published: true
 publication_name: team_zenn
 ---
 
@@ -198,12 +198,12 @@ export const useTheme = () => {
 単純化した例としては以下のようになります。
 
 ```css
-{
+.component {
   --background-color: #fff;
   --text-color: #000000;
 }
 
-[data-theme='dark-blue'] {
+[data-theme='dark-blue'] .component {
   --background-color: #000;
   --text-color: #fff;
 }
@@ -253,7 +253,7 @@ iframe {
   color-scheme: light;
 }
 
-iframe[data-theme='dark-blue'] {
+[data-theme='dark-blue'] iframe {
   color-scheme: dark;
 }
 
