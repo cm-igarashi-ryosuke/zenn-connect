@@ -2,8 +2,8 @@
 title: Zennのダークモードを実装しました
 emoji: 🌃
 type: tech
-topics: []
-published: true
+topics: [darkmode]
+published: false
 publication_name: team_zenn
 ---
 
