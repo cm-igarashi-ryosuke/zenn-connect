@@ -3,7 +3,7 @@ title: "「生成AIを活用したZennの取り組み事例」というタイト
 emoji: "🎤"
 type: "idea" # tech: 技術記事 / idea: アイデア
 topics: ["recommendation", "llm", "ai"]
-published: true
+published: false
 publication_name: team_zenn
 ---
 
