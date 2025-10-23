@@ -71,7 +71,7 @@ Terraformにおける循環参照というのは、リソースAの作成にリ�
 
 まず、全てを1つのファイルに書く場合の例です：
 
-```hcl
+```hcl:main.tf
 # Cloud Logging Sink
 resource "google_logging_project_sink" "notify-sink" {
   name                   = "notify-sink"
@@ -100,9 +100,9 @@ resource "google_pubsub_topic_iam_member" "publisher" {
 
 実際のプロジェクトでは、再利用性と保守性のためにモジュール化することが多いと思います。その場合、`output`ブロックを使ってモジュール間でデータを受け渡します。
 
-#### modules/cloud-logging/main.tf
+まず、Cloud Loggingモジュールです。基本的には先ほどと同じSinkの定義ですが、モジュール化しているのでproject_idを変数として受け取るようにしています。
 
-```hcl
+```hcl:modules/cloud-logging/main.tf
 variable "project_id" {
   description = "GCPのproject_id"
   type        = string
@@ -117,20 +117,18 @@ resource "google_logging_project_sink" "notify-sink" {
 }
 ```
 
-#### modules/cloud-logging/outputs.tf
+次に、このモジュールの`outputs.tf`です。ここがポイントで、`writer_identity`を`output`として公開することで、他のモジュールから参照できるようにします。
 
-`output`ブロックでモジュール外部から`writer_identity`を参照できるようにします。
-
-```hcl
+```hcl:modules/cloud-logging/outputs.tf
 output "notify_sink_writer_identity" {
   description = "notify-sinkのwriter identity"
   value       = google_logging_project_sink.notify-sink.writer_identity
 }
 ```
 
-#### modules/cloud-pubsub/main.tf
+続いて、Pub/Subモジュールです。こちらは`notify_sink_writer_identity`を変数として受け取り、それをIAMバインディングで使用しています。
 
-```hcl
+```hcl:modules/cloud-pubsub/main.tf
 variable "notify_sink_writer_identity" {
   description = "notify-sinkのwriter identity"
   type        = string
@@ -148,11 +146,9 @@ resource "google_pubsub_topic_iam_member" "publisher" {
 }
 ```
 
-#### environments/prd/main.tf
+最後に、これらのモジュールを組み合わせる部分です。`cloud-logging`モジュールの`output`を`cloud-pubsub`モジュールの変数に渡すことで、データの受け渡しを行います。
 
-モジュール間の依存関係を定義します。
-
-```hcl
+```hcl:environments/prd/main.tf
 # 先にcloud-loggingモジュールを定義
 module "cloud-logging" {
   source     = "../../modules/cloud-logging"
@@ -174,7 +170,7 @@ Terraformのモジュールは独立したスコープを持つため、ある�
 
 例えば、以下のような記述はできません：
 
-```hcl
+```hcl:environments/prd/main.tf
 # これはできない
 module "cloud-pubsub" {
   # 別モジュールのリソース属性を直接参照することはできない
@@ -184,7 +180,7 @@ module "cloud-pubsub" {
 
 `output`ブロックで値を公開することで、モジュール外部から参照可能になります：
 
-```hcl
+```hcl:environments/prd/main.tf
 # これは可能
 module "cloud-pubsub" {
   # outputで公開された値は参照できる
@@ -196,34 +192,23 @@ module "cloud-pubsub" {
 
 ## unique_writer_identityについて
 
-```hcl
+コード例で`unique_writer_identity = true`という設定を使っていますが、これについて少し説明します。
+
+```hcl:modules/cloud-logging/main.tf
 resource "google_logging_project_sink" "notify-sink" {
-  unique_writer_identity = true  # または false
+  unique_writer_identity = true
 }
 ```
 
-この`unique_writer_identity`という設定について、少し補足します。
+この設定を`true`にすると、このSink専用のサービスアカウントが作られます。形式はこんな感じです：
 
-### unique_writer_identity = true（推奨）
+```
+serviceAccount:p{PROJECT_NUMBER}-{UNIQUE_ID}@gcp-sa-logging.iam.gserviceaccount.com
+```
 
-`true`にすると、専用のサービスアカウントが作成されます。
+逆に`false`にすると、プロジェクト全体で共通の`cloud-logs@system.gserviceaccount.com`というサービスアカウントを使います。
 
-- 形式：`serviceAccount:p{PROJECT_NUMBER}-{UNIQUE_ID}@gcp-sa-logging.iam.gserviceaccount.com`
-- メリット：
-  - Sink毎に独立した権限管理が可能
-  - セキュリティ上より安全
-  - 権限の最小化が容易
-
-### unique_writer_identity = false
-
-`false`にすると、プロジェクト共通のCloud Logsサービスアカウントを使用します。
-
-- 形式：`serviceAccount:cloud-logs@system.gserviceaccount.com`
-- デメリット：
-  - 全てのSinkで同じサービスアカウントを共有
-  - 細かい権限制御が困難
-
-特別な理由がない限り、`unique_writer_identity = true`を使うのが良いと思います。
+私は最初、「どっちでもいいか」と思っていたんですが、後々のことを考えると`true`にしておいた方が良さそうです。Sink毎に権限を分けられるので、「このSinkにはこのトピックだけ」という細かい制御ができます。
 
 ## おわりに
 
@@ -231,14 +216,6 @@ Cloud Logging SinkからPub/Subへの送信は、実は循環参照にはなり�
 
 `output`ブロックは循環参照の解決ではなく、モジュール間のデータ受け渡しに使います。
 
-IAMバインディングを含めて全てTerraformで管理することで、手動設定の巻き戻りという問題も起きなくなりました。最初からこうしておけばよかったと反省しています。
+IAMバインディングを含めて全てTerraformで管理することで、手動設定の巻き戻りという問題も起きなくなりました。
 
 この構成により、Cloud Loggingのログを安全かつ効率的にPub/Subに転送し、さらなる処理（Slackへの通知、BigQueryへの保存など）に繋げることができます。
-
-内容に誤り等がありましたら教えて下さい。
-
-## 参考リンク
-
-- [Cloud Logging: Configuring exports](https://cloud.google.com/logging/docs/export/configure_export_v2)
-- [Terraform: google_logging_project_sink](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/logging_project_sink)
-- [Terraform: google_pubsub_topic_iam_member](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/pubsub_topic_iam)
