@@ -3,7 +3,7 @@ title: Zennのエディタとプレビューのリアルタイム反映・スク
 emoji: "🗒️"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["zenn", "markdownit", "codemirror", "morphdom"]
-published: false
+published: true
 publication_name: team_zenn
 ---
 
@@ -121,12 +121,14 @@ morphdom(beforeNode, afterNode);
 <p data-line="7" class="code-line">（イメージ）</p>
 ```
 
-なので、例えばエディタのスクロール位置が 4.5 の場合、4.5 の上下の位置（この例では `data-line` が 3 と 5）の DOM を探し、DOM の高さを計算して、4.5 の位置に相当するところまでスクロールを移動させます。
+例えばエディタのスクロール位置が 4.5 の場合、プレビューの方は 0 始まりなので 3.5 の上下の位置（この例では `data-line` が 3 と 5）の DOM を探し、DOM の高さを計算して、3.5 の位置に相当するところまでスクロールを移動させます。
 
-実際にはもっと細かい調整が必要だったり、エッジケースの対応も多々ありますが、AI との対話によりかなりスムーズな動きが実現できたと思います。
+実際にはもっと細かい調整が必要だったり、エッジケースの対応も多々ありますが、基本的な仕組みとしては以上になります。
 
 ## おわり
 
-お読みいただきありがとうございました。Zenn の新しいエディタの、プレビューのリアルタイム反映とスクロール同期の仕組みについて説明しました。何かの参考になれば幸いです。
+Zenn の新しいエディタの、プレビューのリアルタイム反映とスクロール同期の仕組みについて説明しました。何かの参考になれば幸いです。
 
-また、エディタに関するフィードバックは[zenn-community](https://github.com/zenn-dev/zenn-community/issues)の issue でお寄せください。
+また、エディタに関するフィードバックは [zenn-community](https://github.com/zenn-dev/zenn-community/issues) の issue でお寄せください。
+
+お読みいただきありがとうございました。
