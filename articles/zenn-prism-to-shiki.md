@@ -49,9 +49,9 @@ https://x.com/mizchi/status/2000544806716793084
 - ESModulesであり、どのような環境でも利用可能
 - CSS Classを使わない（style属性にcolorを指定する）
 
-自分の理解では、Prism.jsはCSRを想定しており、厳密さより軽量・高速を重視している。ShikiはSSRを想定して厳密さを重視している。厳密さを実現するために、TextMate Grammar（TextMateというエディタが発祥の言語定義フォーマット）を使っている。VSCodeもこのフォーマットを使っている。TextMate Grammarは、Onigurumaという正規表現ライブラリの正規表現を前提としている。Onigurumaの豊富な表現により、より厳密な言語解析が可能となっている。
+自分の理解では、Prism.jsはCSRを想定しており、厳密さより軽量・高速を重視しています。一方、ShikiはSSRを想定しており、厳密さを重視しています。その厳密さを実現するために、TextMate Grammarという言語定義フォーマットを採用しています。TextMate Grammarは、もともとTextMateというエディタで生まれたもので、VSCodeでも採用されています。このフォーマットはOnigurumaという正規表現ライブラリを前提としており、Onigurumaの豊富な表現力によって、より厳密な言語解析が可能になっています。
 
-ところで、Onigurumaは開発が終了したとなっているのですが今後どうなるのでしょうか。
+ところで、[Oniguruma](https://github.com/kkos/oniguruma)は開発終了となっており、今後の動向が気になります。
 
 ### ベンチマーク
 
