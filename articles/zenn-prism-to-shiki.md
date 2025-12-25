@@ -44,7 +44,7 @@ https://x.com/mizchi/status/2000544806716793084
 
 - 言語定義にTextMate Grammarを使用
 - Oniguruma（正規表現ライブラリ）による、厳密な文法解析
-- HASTベースで解析
+- HASTベースでHTMLを生成
 - SSRを主要用途とする（CSRでも利用可能）
 - ESModulesであり、どのような環境でも利用可能
 - CSS Classを使わない（style属性にcolorを指定する）
