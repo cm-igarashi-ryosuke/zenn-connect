@@ -52,11 +52,11 @@ https://x.com/mizchi/status/2000544806716793084
 両者の違いについて自分の理解をまとめると
 
 - Prism.jsはCSRを想定しており、厳密さよりバンドルサイズや速度を重視している。
-- ShikiはSSRを想定して厳密さを重視している。厳密さを実現するために、TextMate Grammar（TextMateというエディタが発祥の言語定義フォーマット）を使っている。TextMate Grammarは、Onigurumaという正規表現ライブラリの正規表現を前提としている。Onigurumaの豊富な表現により、より厳密な言語解析が可能となっている。
+- ShikiはSSRを想定して厳密さを重視している。厳密さを実現するために、TextMate Grammar（TextMateというエディタが発祥の言語定義フォーマット）を使っている。TextMate Grammarは、Onigurumaという正規表現ライブラリの高度な機能を前提としている。Onigurumaの豊富な表現により、より厳密な言語解析が可能となっている。
 
 となります。
 
-ところで、Onigurumaは[開発が終了した](https://github.com/kkos/oniguruma?tab=readme-ov-file#this-project-ended-on-april-24-2025)となっているので、これに依存するTextMate Grammarの今後の動向が気になります。
+余談ですが、Onigurumaは[2025/04で開発が終了した](https://github.com/kkos/oniguruma?tab=readme-ov-file#this-project-ended-on-april-24-2025)となっています。少し調べたところ、TextMate Grammarの他にも数多くのライブラリがOnigurumaを使用しているため影響が大きそうです。今後の動向が気になります。
 
 ### ベンチマーク
 
