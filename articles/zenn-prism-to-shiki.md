@@ -318,30 +318,28 @@ ZennではMarkdownから変換したHTMLをDBに保存しています。HTMLはP
 
 現在、MarkdownからHTMLへの変換処理（[zenn-markdown-html](https://github.com/zenn-dev/zenn-editor/tree/canary/packages/zenn-markdown-html)）は、Cloud Run Functions（第1世代）のHTTPサービスとして稼働しています。これをShikiバージョンにしてパフォーマンス検証を行いました。
 
+どちらも20リクエスト/秒で1万件処理したときのメトリクスです。
+
 **Prism版**
+使用メモリが120MBほどで、安定して20リクエスト/秒をさばけています。
 ![](https://storage.googleapis.com/zenn-user-upload-integration/4d68fbffdf80-20251225.png)
 
 **Shiki版**
-![](https://storage.googleapis.com/zenn-user-upload-integration/ca0aec88bcc1-20251225.png)
+使用メモリが512MB（設定値の最大）近くにまで達しており、10リクエスト/秒程度しかさばけていません。また実行時間も明らかに大きくなっています。
+![](https://storage.googleapis.com/zenn-user-upload-integration/9715a0f48155-20260107.png)
 
-どちらも20リクエスト/秒で1万件処理したときのメトリクスです。
-
-- Prism版は、使用メモリが120MBほどで、20リクエスト/秒をさばけています。
-- Shiki版は、使用メモリが512MB（設定値の最大）近くにまで達しており、3リクエスト/秒程度しかさばけていません。（※後にこの3リクエスト/秒は設定上のボトルネックがあったことが分かりました）
-
-実装上の問題の可能性もありますが、使用メモリは線形に上がってないのでメモリリークではなさそうな気がします。AIが言うにはOnigurumaがメモリをたくさん使うらしいですが、こんなに使うんでしょうか。
-
-とりあえず深追いはせずに、メモリを調整したところ、2Giあれば十分そうということが分かりました。
+Shiki版の方はメモリが逼迫しているように見えます。実装上の問題の可能性もありますが、とりあえず深追いはせずに、メモリを調整したところ、2Giあれば十分そうということが分かりました。
 
 もう一つ比較検証として、Cloud Run Functionsの第1世代と第2世代で比較を行いました。第1世代は、1つのインスタンスで同時に1リクエストを処理します。並列度を上げるには、たくさんのインスタンスを起動します。第2世代は、1つのインスタンスで複数のリクエストを処理します。シングルトンパターンで遅延ロードにしたShiki版は、第2世代の方がパフォーマンスメリットがありそうと考えました。
 
+先ほどと同じく、どちらも20リクエスト/秒で1万件処理したときのメトリクスです。メモリは2Giに設定しています。
+
 **Shiki版（第1世代）**
+使用メモリは1.5GB程度で安定しました。同時実行数が実行時間はPrism版と同じ程度になりました。
 ![](https://storage.googleapis.com/zenn-user-upload-integration/16dade20ee9c-20251225.png)
 
 **Shiki版（第2世代）**
-
-同時接続数: 20
-
+同時接続数は20で設定しています。リクエストのレイテンシが第1世代より倍くらい大きいです。（※第2世代はCloud Run環境なので取れるメトリクスも第一世代と異なります）
 ![](https://storage.googleapis.com/zenn-user-upload-integration/d23d386b5d3b-20251225.png)
 ![](https://storage.googleapis.com/zenn-user-upload-integration/4706de466811-20251225.png)
 
