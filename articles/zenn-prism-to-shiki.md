@@ -1,21 +1,22 @@
 ---
-title: "ZennのシンタックスハイライターをPrism.jsからShikiに移行しています"
+title: "ZennのシンタックスハイライターをPrism.jsからShikiに移行しました"
 emoji: "🌈"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["zenn", "prismjs", "shiki"]
 published: false
 publication_name: team_zenn
 ---
+タイトルの通り、Zennのシンタックスハイライターを [Prism.js](https://prismjs.com/) から [Shiki](https://shiki.matsu.io/) に移行しました。
 
-:::message
-移行完了していないものの、検証はほぼ終わっており、キリの良いところまでアウトプットしたかったので記事を書いています。
-:::
+シンタックスハイライターとは、Zennの記事などにコードブロックを記述したときに、そのコードブロックの言語にあわせて文法や変数などに色を付けるためのライブラリです。例えば以下のようにコードブロックに言語を指定すると言語の文法に合わせた色付けがされます。
 
-タイトルの通り、Zennのシンタックスハイライターを [Prism.js](https://prismjs.com/) から [Shiki](https://shiki.matsu.io/) に移行しています。
-
-シンタックスハイライターとは、Zennの記事などにコードブロックを記述したときに、そのコードブロックの言語にあわせて文法や変数などに色を付けるためのライブラリです。例えば以下のようなものです。
-
-```javascript
+````
+```js
+console.log("Hello world");
+```
+````
+↓ ハイライトを適用
+```js
 console.log("Hello world");
 ```
 
@@ -43,8 +44,8 @@ https://x.com/mizchi/status/2000544806716793084
 ### Shiki
 
 - 言語定義にTextMate Grammarを使用
-- Oniguruma（正規表現ライブラリ）による、厳密な文法解析
-- HASTベースで解析
+- Oniguruma（正規表現エンジン）による、厳密な文法解析
+- HASTベースでHTMLを構築（カスタマイズがしやすい）
 - SSRを主要用途とする（CSRでも利用可能）
 - ESModulesであり、どのような環境でも利用可能
 - CSS Classを使わない（style属性にcolorを指定する）
@@ -52,7 +53,7 @@ https://x.com/mizchi/status/2000544806716793084
 両者の違いについて自分の理解をまとめると
 
 - Prism.jsはCSRを想定しており、厳密さよりバンドルサイズや速度を重視している。
-- ShikiはSSRを想定して厳密さを重視している。厳密さを実現するために、TextMate Grammar（TextMateというエディタが発祥の言語定義フォーマット）を使っている。TextMate Grammarは、Onigurumaという正規表現ライブラリの高度な機能を前提としている。Onigurumaの豊富な表現により、より厳密な言語解析が可能となっている。
+- ShikiはSSRを想定して厳密さを重視している。厳密さを実現するために、TextMate Grammar（TextMateというエディタが発祥の言語定義フォーマット）を使っている。TextMate Grammarは、Onigurumaという正規表現エンジンの高度な機能を前提としている。Onigurumaの豊富な表現により、より厳密な言語解析が可能となっている。
 
 となります。
 
@@ -70,7 +71,7 @@ https://x.com/mizchi/status/2000544806716793084
 | diff モード | 0.48 ms | 0.72 ms | 1.5x 遅い |
 | 大きなコードブロック (50行) | 0.87 ms | 4.53 ms | 5.2x 遅い |
 
-速度については Prism.js に優位性があるものの、ミリ秒レベルなのでShikiも十分に速いです。
+速度については Prism.js に優位性があるものの、とはいえミリ秒レベルなのでShikiも十分に速いです。
 
 :::details ベンチマークのスクリプト
 ```javascript
@@ -244,11 +245,11 @@ console.log('\n');
 
 ## 実装の移行
 
-こちらがそのPull Requestです。
+こちらがそのPull Requestです。（※後に不具合修正のPRがいくつかあります）
 
 https://github.com/zenn-dev/zenn-editor/pull/611
 
-もともと `diff` のハイライトを独自実装しており、それの移植による変更量が多いのですが、本筋のPrismからShikiへの移行自体はそれほど大変な作業ではありませんでした。（もちろんAI Codingの力を大いに借りていますが。）
+もともと `diff` のハイライトを独自実装しており、それの移植による変更量が多いのですが、Prism.jsからShikiへの移行自体はそれほど大変な作業ではありませんでした。（もちろんAI Codingの力を大いに借りていますが。）
 
 シンタックスハイライトは、MarkdownからHTMLに変換する処理の一部として行います。変換には [markdown-it](https://github.com/markdown-it/markdown-it) というライブラリを使っており、これのプラグインとして Shiki を差し込むようなイメージで実装されています。
 
@@ -292,6 +293,12 @@ async function ensureLanguageLoaded(
 }
 ```
 
+:::message
+インスタンスをキャッシュする方法では、ランタイム初期化時にほぼ同時リクエストが来ると、インスタンスを複数作ってしまうことが分かりました。現在は、インスタンスのPromiseをキャッシュするようにしています。
+
+https://github.com/zenn-dev/zenn-editor/pull/615
+:::
+
 ### 非同期処理
 
 Shikiのハイライト処理には非同期関数があります。Markdownの中に複数のコードブロックがある場合、同期処理よりも非同期処理のほうがパフォーマンスが良いはずなので、シンタックスハイライトは非同期処理でまとめて行っています。
@@ -306,21 +313,21 @@ Shikiのハイライト処理には非同期関数があります。Markdownの�
 
 [Transformers](https://shiki.matsu.io/guide/transformers) という機能が便利でした。
 
-ShikiはハイライトされたHTMLを生成する過程で、HAST（HTML用のAST）を使用します。HASTを操作することで、生成されるHTMLをカスタマイズすることができます。Prismaの時はHTMLをカスタマイズするために、生成されたHTMLに対して文字列一致をしてHTMLタグや属性を加えるなどしていたので、Transformerを使うことでより確実な実装にすることができました。
+ShikiはハイライトされたHTMLを生成する過程で、HAST（HTML用のAST）を使用します。HASTを操作することで、生成されるHTMLをカスタマイズすることができます。Prism.jsの時はHTMLをカスタマイズするために、生成されたHTMLに対して文字列一致をしてHTMLタグや属性を加えるなどしていたので、Transformerを使うことでより確実な実装にすることができました。
 
-## マイグレーション計画
+## マイグレーション
 
-ZennではMarkdownから変換したHTMLをDBに保存しています。HTMLはPrismでハイライト済の状態なので、Shikiで再変換する必要がありますが、大量の記事がありますので変換に時間がかかり、この間、PrismとShikiの両方が共存する状態となります。
+ZennではMarkdownから変換したHTMLをDBに保存しています。HTMLはPrism.jsでハイライト済の状態なので、Shikiで再変換する必要がありますが、大量の記事がありますので変換に時間がかかり、この間、Prism.jsとShikiの両方が共存する状態となります。
 
-幸いにもPrismが生成するHTMLのCSSと、Shikiのstyleで競合する部分が無かったため、共存は問題ありませんでした。ゆっくり時間をかけて既存の記事の再変換を行う予定です。
+幸いにもPrism.jsが生成するHTMLのCSSと、Shikiのstyleで競合する部分が無かったため、共存は問題ありませんでした。ゆっくり時間をかけて既存の記事の再変換を行うことにしました。
 
 ## パフォーマンス検証
 
-現在、MarkdownからHTMLへの変換処理（[zenn-markdown-html](https://github.com/zenn-dev/zenn-editor/tree/canary/packages/zenn-markdown-html)）は、Cloud Run Functions（第1世代）のHTTPサービスとして稼働しています。これをShikiバージョンにしてパフォーマンス検証を行いました。
+現在、MarkdownからHTMLへの変換処理（[zenn-markdown-html](https://github.com/zenn-dev/zenn-editor/tree/canary/packages/zenn-markdown-html)）は、Cloud Run Functions（第1世代）のHTTPサービスとして稼働しています。これをShiki版にしてパフォーマンス検証を行いました。
 
 どちらも20リクエスト/秒で1万件処理したときのメトリクスです。
 
-**Prism版**
+**Prism.js版**
 使用メモリが120MBほどで、安定して20リクエスト/秒をさばけています。
 ![](https://storage.googleapis.com/zenn-user-upload-integration/4d68fbffdf80-20251225.png)
 
@@ -328,27 +335,50 @@ ZennではMarkdownから変換したHTMLをDBに保存しています。HTMLはP
 使用メモリが512MB（設定値の最大）近くにまで達しており、10リクエスト/秒程度しかさばけていません。また実行時間も明らかに大きくなっています。
 ![](https://storage.googleapis.com/zenn-user-upload-integration/9715a0f48155-20260107.png)
 
-Shiki版の方はメモリが逼迫しているように見えます。実装上の問題の可能性もありますが、とりあえず深追いはせずに、メモリを調整したところ、2Giあれば十分そうということが分かりました。
+実装上の問題の可能性もありますが、とりあえず深追いはせずに、メモリを調整したところ、2GBあれば実行時間に関してはPrism.jsと同等な性能が出るということが分かりました。Cloud Functionsはメモリの最大量に応じて付与されるCPUが大きくなるので、単純に性能が上がったのかもしれません。
 
 もう一つ比較検証として、Cloud Run Functionsの第1世代と第2世代で比較を行いました。第1世代は、1つのインスタンスで同時に1リクエストを処理します。並列度を上げるには、たくさんのインスタンスを起動します。第2世代は、1つのインスタンスで複数のリクエストを処理します。シングルトンパターンで遅延ロードにしたShiki版は、第2世代の方がパフォーマンスメリットがありそうと考えました。
 
-先ほどと同じく、どちらも20リクエスト/秒で1万件処理したときのメトリクスです。メモリは2Giに設定しています。
+先ほどと同じく、どちらも20リクエスト/秒で1万件処理したときのメトリクスです。メモリは2GBに設定しています。
 
 **Shiki版（第1世代）**
-使用メモリは1.5GB程度で安定しました。同時実行数が実行時間はPrism版と同じ程度になりました。
 ![](https://storage.googleapis.com/zenn-user-upload-integration/16dade20ee9c-20251225.png)
 
 **Shiki版（第2世代）**
-同時接続数は20で設定しています。リクエストのレイテンシが第1世代より倍くらい大きいです。（※第2世代はCloud Run環境なので取れるメトリクスも第一世代と異なります）
+同時接続数は20で設定しています。（※第2世代はCloud Run環境なので取れるメトリクスも第一世代と異なります）
 ![](https://storage.googleapis.com/zenn-user-upload-integration/d23d386b5d3b-20251225.png)
 ![](https://storage.googleapis.com/zenn-user-upload-integration/4706de466811-20251225.png)
 
 第2世代については、同時接続数を変えて何度か試しましたが、いずれも第1世代の方がリクエストあたりの実行時間（レイテンシ）が小さい結果になりました。これは想定と違う結果でした。もう少し時間をかけて検証したいと思います。
 
-## 今後の展望
+## プレビューの高速化
 
-現在はオンラインエディタのプレビューも含めて、すべてCloud Run Functionsで変換を行っています。今後はオンラインエディタのプレビューについては、ブラウザ環境で変換を行うようにすることで、レイテンシを改善したいと考えています。
+これについては、Shikiへの移行とは直接関係ないのですが、[60fpsでの変換](https://zenn.dev/mizchi/articles/markdown-incremental-preview)に感化されてやってみました。
 
-それにしても[60fpsでの変換](https://zenn.dev/mizchi/articles/markdown-incremental-preview)は無理ですが 😂 （これは実際に触ってみて衝撃的な速さでした・・・！）
+**テストケース**
+3パターンのmarkdownを用意しました。
+| ケース | 説明 | 文字数 |
+|--------|------|--------|
+| 小規模 | 見出し + 段落 + リスト（約100文字） | 91 |
+| 中規模 | コードブロック複数含む一般的な記事（約1,500文字） | 1,578 |
+| 大規模 | 複数言語のコードブロック + 長文（約5,000文字） | 5,110 |
 
-それではまた。
+**テスト結果**
+テストケースのmarkdownを100回変換した結果の平均値が以下です。
+| ケース | 平均処理時間 | 出力HTML長 | メモリ使用前 | メモリ使用後 | メモリ増分 |
+|--------|-------------|-----------|-------------|-------------|-----------|
+| 小規模 | 5.42 ms | 1,118 | 230.46 MB | 230.46 MB | 0 B |
+| 中規模 | 6.25 ms | 12,328 | 289.56 MB | 284.56 MB | -5,249,296 B |
+| 大規模 | 14.39 ms | 37,267 | 354.85 MB | 354.85 MB | 0 B |
+
+これはブラウザ上での実行結果なので、ローカルマシン（Apple M4）のスペックに依存しますが、想像していたより遥かに速く、Cloud Functions環境のような大量のメモリ消費も確認されませんでした。
+
+実際の[私の記事](https://zenn.dev/team_zenn/articles/zenn-markdown-editor-by-cm6)（コードブロックが15個ある）でも試してみましたが、30~40msで変換できています。
+
+| ファイル名 | 文字数 | 平均処理時間 | 出力HTML長 |
+|-----------|--------|-------------|-----------|
+| zenn-markdown-editor-by-cm6.md | 16,858 | 34.14 ms | 76,360 |
+
+現在、実験的にご提供しているオンラインエディタの「新しいエディタ」の分割表示でも、少しもっさりした体感だったのが、即座に反映されるようになりました。
+
+それではまた！
