@@ -3,7 +3,7 @@ title: "Zennのプレビュー変換をブラウザ上で実行するように�
 emoji: "🚀"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["zenn", "shiki"]
-published: false
+published: true
 publication_name: team_zenn
 ---
 
