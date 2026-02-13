@@ -3,7 +3,7 @@ title: "Claude CodeとGitHub ActionsでFlakyテストをほぼゼロにした"
 emoji: "🔧"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["claudecode", "githubactions", "test", "ci"]
-published: false
+published: true
 publication_name: team_zenn
 ---
 
