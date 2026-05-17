@@ -4,6 +4,7 @@ emoji: "🤖"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["googleadk", "gemini", "vertexai", "agent", "python"]
 published: false
+description: "Google ADK でカスタム関数と Google Search を併用した際に発生する「Multiple tools are supported only when they are all search tools」エラーの原因と、Gemini 3 の Tool Combination 機能による解決策を紹介します。"
 ---
 
 ## はじめに
@@ -56,7 +57,7 @@ agent = Agent(
 | URL Context | `url_context` |
 | Google Maps | `google_maps_grounding` |
 
-カスタム関数以外は Gemini の組み込みツールとして扱われます。**カスタム関数と組み込みツールを1つの API リクエストに含めることができない**、という制約です。ちなみに、これは ADK の制約ではなく、Gemini API（モデル）側の制約になります。
+カスタム関数以外は Gemini の組み込みツールとして扱われます。**カスタム関数と組み込みツールを1つの API リクエストに含めることができない**、という制約です。ちなみに、これは **ADK の制約ではなく、Gemini API（モデル）側の制約** になります。
 
 ## sub_agents 構成での回避を試みる
 
@@ -93,8 +94,8 @@ root_agent = Agent(
 
 この問題は GitHub Issue として報告・議論されています。
 
-- [google/adk-python#899](https://github.com/google/adk-python/issues/899) — sub_agents で異なるツール種別を使うと失敗する
-- [google/adk-python#969](https://github.com/google/adk-python/issues/969) — 組み込みツールと FunctionDeclaration の共存不可（Master Issue）
+- [google/adk-python#899](https://github.com/google/adk-python/issues/899) : sub_agents で異なるツール種別を使うと失敗する
+- [google/adk-python#969](https://github.com/google/adk-python/issues/969) : 組み込みツールと FunctionDeclaration の共存不可（Master Issue）
 
 Issue 内では `AgentTool` でラップする方法や、組み込みツールをカスタム関数に置き換える方法などの回避策が提案されています。ただ、ADK のバージョンや構成によって効果が異なるとの報告もあり、自分の環境では完全な解決には至りませんでした。
 
@@ -124,5 +125,3 @@ Gemini 3 にすることで、単一エージェントでもサブエージェ�
 Gemini 2.x 系では、組み込みツールとカスタム関数の混在による `400 INVALID_ARGUMENT` エラーが発生します。sub_agents でツールを分離しても回避できず、なかなか悩ましい制約でした。
 
 Gemini 3 では Tool Combination 機能（プレビュー）により、この制約が解消されています。単一エージェントでもサブエージェント構成でも正常に動作することを確認できたので、同じエラーで困っている方の参考になれば幸いです。
-
-内容に誤り等がありましたら、コメントで教えていただけると助かります。

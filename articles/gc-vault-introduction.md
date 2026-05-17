@@ -1,11 +1,10 @@
 ---
-title: "ローカル Terraform の GCP 認証を ADC から 1Password"
+title: "ローカル Terraform の Google Cloud 認証を ADC から 1Password + Service Account Impersonation に置き換える"
 emoji: "🔐"
 type: "tech"
-topics: ["terraform", "gcp", "1password", "security", "iam"]
+topics: ["gcp", "1password", "security", "gcloud", "claudecode"]
 published: false
 ---
-# ローカル Terraform の GCP 認証を ADC から 1Password + Service Account Impersonation に置き換えた
 
 ## はじめに
 
