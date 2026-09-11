@@ -2,7 +2,7 @@
 title: "SendGridからAmazon SESに移行してコストを削減する"
 emoji: "📪️"
 type: "idea"
-topics: ["sendgrid", "ses"]
+topics: ["sendgrid", "amazonses"]
 publication_name: team_zenn
 published: true
 ---
