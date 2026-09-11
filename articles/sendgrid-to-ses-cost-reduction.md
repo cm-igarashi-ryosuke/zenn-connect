@@ -114,12 +114,12 @@ Amazon SESでも同様の機能が提供されており、バウンスや苦情�
 
 ### レート制限・上限緩和申請
 
-SendGridの送信レート制限は非常に大きく、使っていて気にするシーンはありませんでした。調べてみると、エンドポイントへのリクエストは10,000リクエスト/秒で、1リクエストあたり1000件までの送信が可能なようです（[参照](https://www.twilio.com/docs/sendgrid/for-developers/sending-email/v3-mail-send-faq#are-there-limits-on-how-often-i-can-send-email-and-how-many-recipients-i-can-send-to)）。
+SendGridの送信レート制限は非常に大きく、使っていて気にするシーンはありませんでした。調べてみると、エンドポイントへのリクエストは10,000リクエスト/秒で、1リクエストあたり1,000件までの送信が可能なようです（[参照](https://www.twilio.com/docs/sendgrid/for-developers/sending-email/v3-mail-send-faq#are-there-limits-on-how-often-i-can-send-email-and-how-many-recipients-i-can-send-to)）。
 
 Amazon SESでは、1秒間に送信可能な数や、1日あたりの上限数が設定されています。初期値は小さいですが、上限緩和申請で増加させることが可能です。Zennの場合は、必要数を申請したら即時に承認されました。
 
 :::message
-いずれにしても、ドメインやIPの信頼度によって受信を拒否される可能性があるため、送信レートだけでなく、送信元の信頼性も重要です。
+いずれにしても、ドメインや送信元IPアドレスの信頼度によって受信を拒否される可能性があるため、送信レートだけでなく、送信元の信頼性も重要です。
 :::
 
 ## まとめ
