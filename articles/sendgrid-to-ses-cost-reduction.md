@@ -88,8 +88,6 @@ Amazon SESには現時点で、SendGridのようなテンプレート管理機�
 ![](https://static.zenn.studio/user-upload/4ad40eb8bbd0-20260911.png)
 *管理画面に実装したテンプレート管理機能*
 
-こんなのは一瞬でできてしまいますよね。
-
 :::message
 SendGridのテンプレートは[Handlebars](https://www.twilio.com/docs/sendgrid/for-developers/sending-email/using-handlebars)というテンプレートエンジンを利用しており、条件分岐やループなどのロジックをテンプレート内で記述することができます。一方、Amazon SESのテンプレートは、`{{var}}`記法による変数の埋め込みしかできない点に注意です。
 :::
